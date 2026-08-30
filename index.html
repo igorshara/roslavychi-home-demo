@@ -16,7 +16,7 @@
    див. ROSLAVYCHI-PROTOTYPE-SCOPE.md §Дизайн.
    ============================================================ */
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
+:root{--flagh:26px;
   --brand:#2F5D50; --brand-600:#264C41; --brand-700:#1D3A32; --brand-050:#EAF1EE;
   --accent:#C0A15A; --accent-600:#A8883F;
   --bg:#F5F2EC; --surface:#FFFFFF; --surface-2:#FBF9F4; --surface-alt:#F0EBE0;
@@ -63,7 +63,7 @@ svg{display:block;width:18px;height:18px;flex:none}
 
 /* ---------- Демо-стрічка зверху ---------- */
 .demoflag{
-  position:fixed;top:0;left:0;right:0;height:26px;z-index:80;
+  position:fixed;top:0;left:0;right:0;height:var(--flagh);z-index:80;
   background:repeating-linear-gradient(135deg,var(--accent) 0 14px,var(--accent-600) 14px 28px);
   color:#2b2205;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   display:flex;align-items:center;justify-content:center;gap:8px;
@@ -71,9 +71,9 @@ svg{display:block;width:18px;height:18px;flex:none}
 .demoflag b{font-weight:800}
 
 /* ---------- App shell ---------- */
-#app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh;padding-top:26px}
+#app{display:grid;grid-template-columns:var(--side) 1fr;min-height:100vh;padding-top:var(--flagh)}
 .sidebar{
-  position:sticky;top:26px;align-self:start;height:calc(100vh - 26px);
+  position:sticky;top:var(--flagh);align-self:start;height:calc(100vh - var(--flagh));
   background:var(--brand-700);color:#EAF1EE;display:flex;flex-direction:column;
   padding:18px 14px;gap:6px;overflow-y:auto;z-index:40;
 }
@@ -114,7 +114,7 @@ svg{display:block;width:18px;height:18px;flex:none}
 
 /* ---------- Main ---------- */
 .main{min-width:0;display:flex;flex-direction:column}
-.topbar{position:sticky;top:26px;z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);
+.topbar{position:sticky;top:var(--flagh);z-index:30;background:color-mix(in srgb,var(--bg) 88%,transparent);
   -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
   padding:13px clamp(16px,4vw,40px);display:flex;align-items:center;gap:14px}
 .hamburger{display:none;width:40px;height:40px;border-radius:11px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--sh-1);color:var(--ink)}
@@ -372,7 +372,7 @@ table.tbl tbody tr:hover,table.tbl tr.click:hover{background:var(--surface-2);cu
   .sidebar{position:fixed;left:0;top:0;height:100vh;width:290px;transform:translateX(-100%);transition:.25s;padding-top:20px;z-index:110}
   .sidebar.open{transform:none;box-shadow:var(--sh-3)}
   .hamburger{display:grid;place-items:center}
-  .topbar{top:26px}
+  .topbar{top:var(--flagh)}
   .botnav{display:grid}
   .view{padding-bottom:150px}
   .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:105;display:none}
@@ -396,9 +396,12 @@ table.tbl tbody tr:hover,table.tbl tr.click:hover{background:var(--surface-2);cu
   /* flex:none — інакше рядок топбару стискає кнопку по ширині до 32px,
      і висота 44 нічого не рятує: палець промахується вбік. */
   .hamburger{width:44px;height:44px;flex:none}
-  /* стрічка 26px заввишки — 12px текст лягає в неї без зміни висоти,
-     тож зсув .topbar чіпати не треба */
-  .demoflag{font-size:12px}
+  /* Стрічку на телефоні НЕ можна лишати 26px: 12px текст лягає у два рядки
+     й нижній обрізало (побачено в iOS Simulator, браузерні профілі цього не
+     ловлять — вони міряють кегль, а не обрізання). Висота тепер одна змінна
+     --flagh на стрічку, #app, sidebar і topbar, тож зсув не розсинхронюється. */
+  :root{--flagh:44px}
+  .demoflag{font-size:12px;line-height:1.15;padding:0 10px;text-align:center}
   .demobar .db{min-height:44px}
   /* читабельний мінімум тексту */
   .brand .bs{font-size:12px}
