@@ -2244,12 +2244,23 @@ function demoReset(){DEMO=null;resetDemo();}
 function initFabScroll(){
   const fab=document.getElementById('fab'); if(!fab) return;
   const mark=fab.querySelector('.fmark'); if(mark && !mark.innerHTML) mark.innerHTML=svg(I.leaf);
-  let tid=null;
+  // Фрося помітна, коли до неї є діло, і не заступає контент, коли діла нема:
+  // під прокрутку згортається одразу, у спокої — через 3с. Будь-який дотик або
+  // прокрутка знову показує її на 3с. Розгорнутою вона стоїть на плитці
+  // «Показники» — саме це й побачив Ігор у симуляторі.
+  let idle=null;
+  const wake=()=>{
+    fab.classList.remove('compact');
+    clearTimeout(idle);
+    idle=setTimeout(()=>fab.classList.add('compact'),3000);
+  };
   addEventListener('scroll',()=>{
     fab.classList.add('compact');
-    clearTimeout(tid);
-    tid=setTimeout(()=>fab.classList.remove('compact'),260);
+    clearTimeout(idle);
+    idle=setTimeout(()=>fab.classList.add('compact'),3000);
   },{passive:true});
+  ['pointerdown','pointermove','keydown'].forEach(e=>addEventListener(e,wake,{passive:true}));
+  wake();
 }
 function syncDemoBar(){
   const bar=document.getElementById('demobar');if(!bar)return;
